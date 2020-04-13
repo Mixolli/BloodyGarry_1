@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "BGCharacterBase.h"
+#include "Characters/BGCharacterBase.h"
 
 // Sets default values
 ABGCharacterBase::ABGCharacterBase()
