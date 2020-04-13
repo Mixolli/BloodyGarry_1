@@ -62,6 +62,7 @@ void ABGCharacterBase::LookUpAtRate(float Value)
 	AddControllerPitchInput(Value * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
+
 // Called every frame
 void ABGCharacterBase::Tick(float DeltaTime)
 {
