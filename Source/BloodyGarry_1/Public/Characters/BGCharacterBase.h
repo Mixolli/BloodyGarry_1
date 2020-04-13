@@ -27,7 +27,7 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player")
 	UStaticMeshComponent* MeshComp;
-	
+
 protected:
 
 	void MoveForward(float Value);
@@ -39,6 +39,7 @@ protected:
 	float BaseTurnRate;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera")
 	float BaseLookUpRate;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
