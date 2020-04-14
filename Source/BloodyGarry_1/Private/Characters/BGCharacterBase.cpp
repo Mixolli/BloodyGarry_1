@@ -81,7 +81,7 @@ void ABGCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAxis("MoveForward", this, &ABGCharacterBase::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ABGCharacterBase::MoveRight);
 
-	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
+	//PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("TurnRate", this, &ABGCharacterBase::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &ABGCharacterBase::LookUpAtRate);
