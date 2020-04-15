@@ -7,6 +7,8 @@
 #include "Components\StaticMeshComponent.h"
 #include "Components\InputComponent.h"
 #include "GameFramework\Controller.h"
+#include "Runtime\Engine\Public\TimerManager.h"
+#include "GameFramework\CharacterMovementComponent.h"
 
 // Sets default values
 ABGCharacterBase::ABGCharacterBase()
@@ -23,44 +25,79 @@ ABGCharacterBase::ABGCharacterBase()
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PlayerMesh"));
 	MeshComp->SetupAttachment(RootComponent);
 
-	BaseTurnRate = 45.0f;
-	BaseLookUpRate = 45.0f;
+	//BaseTurnRate = 45.0f;
+	//BaseLookUpRate = 45.0f;
+
+	//Dash mechanic from "Nitrogen" https://www.youtube.com/watch?v=tSBepXvgFlA
+	CanDash = true;
+	DashDistance = 5000.f;
+	DashCooldown = 1.f;
+	DashStop = 0.1f;
 }
 
 
-void ABGCharacterBase::MoveForward(float Value)
+void ABGCharacterBase::MoveForward(float value)
 {
-	if ((Controller) && (Value != 0.0f))
+	if ((Controller) && (value != 0.0f))
 	{
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
+		//const FRotator Rotation = Controller->GetControlRotation();
+		//const FRotator YawRotation(0, Rotation.Yaw, 0);
 		
-		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-		AddMovementInput(Direction, Value);
+		//const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		//AddMovementInput(Direction, value);
+		AddMovementInput(FVector(1,0,0), value);
 	}
 }
 
-void ABGCharacterBase::MoveRight(float Value)
+void ABGCharacterBase::MoveRight(float value)
 {
-	if ((Controller) && (Value != 0.0f))
+	if ((Controller) && (value != 0.0f))
 	{
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
+		//const FRotator Rotation = Controller->GetControlRotation();
+		//const FRotator YawRotation(0, Rotation.Yaw, 0);
 
-		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-		AddMovementInput(Direction, Value);
+		//const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+		//AddMovementInput(Direction, value);
+		AddMovementInput(FVector(0, 1, 0), value);
 	}
 }
 
-void ABGCharacterBase::TurnAtRate(float Value)
+void ABGCharacterBase::TurnAtRate(float value)
 {
-	AddControllerYawInput(Value * BaseTurnRate * GetWorld()->GetDeltaSeconds());
+	AddControllerYawInput(value * BaseTurnRate * GetWorld()->GetDeltaSeconds());
 }
 
-void ABGCharacterBase::LookUpAtRate(float Value)
+void ABGCharacterBase::LookUpAtRate(float value)
 {
-	AddControllerPitchInput(Value * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+	AddControllerPitchInput(value * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
+
+
+//Dash mechanic from "Nitrogen" https://www.youtube.com/watch?v=tSBepXvgFlA
+void ABGCharacterBase::Dash()
+{
+	if (CanDash)
+	{
+		GetCharacterMovement()->BrakingFrictionFactor = 0.f;
+		LaunchCharacter(FVector(GetActorForwardVector().X, GetActorForwardVector().Y,0).GetSafeNormal() * DashDistance, true, true);
+		CanDash = false;
+		GetWorldTimerManager().SetTimer(UnusedHandle, this, &ABGCharacterBase::StopDashing, DashStop, false);
+	}
+}
+
+void ABGCharacterBase::StopDashing()
+{
+	GetCharacterMovement()->StopMovementImmediately();
+	GetWorldTimerManager().SetTimer(UnusedHandle, this, &ABGCharacterBase::ResetDash, DashCooldown, false);
+	GetCharacterMovement()->BrakingFrictionFactor = 2.f;
+
+}
+
+void ABGCharacterBase::ResetDash()
+{
+	CanDash = true;
+}
+
 
 
 // Called every frame
@@ -78,6 +115,9 @@ void ABGCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
+	PlayerInputComponent->BindAction("Dash", IE_Pressed, this, &ABGCharacterBase::Dash);
+	
+
 	PlayerInputComponent->BindAxis("MoveForward", this, &ABGCharacterBase::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ABGCharacterBase::MoveRight);
 
@@ -85,7 +125,5 @@ void ABGCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("TurnRate", this, &ABGCharacterBase::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &ABGCharacterBase::LookUpAtRate);
-
-
 }
 
