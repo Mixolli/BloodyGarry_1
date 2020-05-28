@@ -25,8 +25,8 @@ ABGCharacterBase::ABGCharacterBase()
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PlayerMesh"));
 	MeshComp->SetupAttachment(RootComponent);
 
-	//BaseTurnRate = 45.0f;
-	//BaseLookUpRate = 45.0f;
+	BaseTurnRate = 45.0f;
+	BaseLookUpRate = 45.0f;
 
 	//Dash mechanic from "Nitrogen" https://www.youtube.com/watch?v=tSBepXvgFlA
 	CanDash = true;
@@ -40,11 +40,11 @@ void ABGCharacterBase::MoveForward(float value)
 {
 	if ((Controller) && (value != 0.0f))
 	{
-		//const FRotator Rotation = Controller->GetControlRotation();
-		//const FRotator YawRotation(0, Rotation.Yaw, 0);
+		const FRotator Rotation = Controller->GetControlRotation();
+		const FRotator YawRotation(0, Rotation.Yaw, 0);
 		
-		//const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-		//AddMovementInput(Direction, value);
+		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		AddMovementInput(Direction, value);
 		AddMovementInput(FVector(1,0,0), value);
 	}
 }
@@ -53,11 +53,11 @@ void ABGCharacterBase::MoveRight(float value)
 {
 	if ((Controller) && (value != 0.0f))
 	{
-		//const FRotator Rotation = Controller->GetControlRotation();
-		//const FRotator YawRotation(0, Rotation.Yaw, 0);
+		const FRotator Rotation = Controller->GetControlRotation();
+		const FRotator YawRotation(0, Rotation.Yaw, 0);
 
-		//const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-		//AddMovementInput(Direction, value);
+		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+		AddMovementInput(Direction, value);
 		AddMovementInput(FVector(0, 1, 0), value);
 	}
 }
@@ -121,7 +121,7 @@ void ABGCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAxis("MoveForward", this, &ABGCharacterBase::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ABGCharacterBase::MoveRight);
 
-	//PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
+	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("TurnRate", this, &ABGCharacterBase::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &ABGCharacterBase::LookUpAtRate);
