@@ -30,15 +30,41 @@ public:
 
 protected:
 
-	void MoveForward(float Value);
-	void MoveRight(float Value);
-	void TurnAtRate(float Value);
+	void MoveForward(float value);
+	void MoveRight(float value);
+	void TurnAtRate(float value);
 	void LookUpAtRate(float value);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera")
 	float BaseTurnRate;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera")
 	float BaseLookUpRate;
+
+	// ---Dash mechanics
+	UFUNCTION()
+		void Dash();
+
+	UPROPERTY(EditAnywhere)
+		float DashDistance;
+
+	UPROPERTY(EditANywhere)
+		float DashCooldown;
+
+	UPROPERTY()
+		bool CanDash;
+
+	UPROPERTY(EditAnywhere)
+		float DashStop;
+	
+	UPROPERTY()
+		FTimerHandle UnusedHandle;
+
+	UFUNCTION()
+		void StopDashing();
+
+	UFUNCTION()
+		void ResetDash();
+	// Dash mechanics---
 
 public:	
 	// Called every frame
