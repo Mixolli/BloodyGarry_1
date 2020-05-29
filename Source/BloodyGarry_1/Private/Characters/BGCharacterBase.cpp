@@ -9,7 +9,6 @@
 #include "GameFramework\Controller.h"
 #include "Runtime\Engine\Public\TimerManager.h"
 #include "GameFramework\CharacterMovementComponent.h"
-#include "HeadMountedDisplayFunctionLibrary.h"
 #include "GameFramework/PlayerController.h"
 #include "UObject/ConstructorHelpers.h"
 
