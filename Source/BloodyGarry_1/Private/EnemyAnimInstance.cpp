@@ -5,13 +5,24 @@
 
 void UEnemyAnimInstance::NativeInitializeAnimation()
 {
-	if (Pawn == nullptr)
+	if (EnemyPawn == nullptr)
 	{
-		Pawn = TryGetPawnOwner();
-		if (Pawn)
-		{
-			//Enemy = Cast<AEnemy>(Pawn);
-		}
+		EnemyPawn = TryGetPawnOwner();
+	}
+}
+
+void UEnemyAnimInstance::UpdateAnimationPropertiess()
+{
+	if (EnemyPawn == nullptr)
+	{
+		EnemyPawn = TryGetPawnOwner();
+	}
+
+	if (EnemyPawn)
+	{
+		FVector Speed = EnemyPawn->GetVelocity();
+		FVector LateralSpeed = FVector(Speed.X, Speed.Y, 0.f);
+		EnemyMovementSpeed = LateralSpeed.Size();
 	}
 }
 

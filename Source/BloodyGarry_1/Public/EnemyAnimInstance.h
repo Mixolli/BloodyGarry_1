@@ -14,18 +14,17 @@ class BLOODYGARRY_1_API UEnemyAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
 
+public:
+
 	virtual void NativeInitializeAnimation() override;
 
 	UFUNCTION(BlueprintCallable, Category = AnimationProperties)
-	void UpdateAnimationProperties();
+	void UpdateAnimationPropertiess();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Movement)
-	bool dashing;
+	float EnemyMovementSpeed;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Movement)
-	class APawn* Pawn;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Movement)
-	class AMain* Enemy;
+	class APawn* EnemyPawn;
 	
 };
