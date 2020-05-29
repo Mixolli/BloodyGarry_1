@@ -3,3 +3,15 @@
 
 #include "EnemyAnimInstance.h"
 
+void UEnemyAnimInstance::NativeInitializeAnimation()
+{
+	if (Pawn == nullptr)
+	{
+		Pawn = TryGetPawnOwner();
+		if (Pawn)
+		{
+			//Enemy = Cast<AEnemy>(Pawn);
+		}
+	}
+}
+

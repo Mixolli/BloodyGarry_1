@@ -41,7 +41,7 @@ ABGCharacterBase::ABGCharacterBase()
 
 	//Dash mechanic from "Nitrogen" https://www.youtube.com/watch?v=tSBepXvgFlA
 	CanDash = true;
-	DashDistance = 5000.f;
+	DashDistance = 1000.f;
 	DashCooldown = 1.f;
 	DashStop = 0.1f;
 }

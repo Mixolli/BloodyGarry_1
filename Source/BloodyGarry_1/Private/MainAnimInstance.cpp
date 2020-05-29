@@ -26,5 +26,14 @@ void UMainAnimInstance::UpdateAnimationProperties()
 		MovementSpeed = LateralSpeed.Size();
 
 		bIsInAir = Pawn->GetMovementComponent()->IsFalling();
+		
+		if (MovementSpeed > 400)
+		{
+			dashing = true;
+		}
+		else
+		{
+			dashing = false;
+		}
 	}
 }

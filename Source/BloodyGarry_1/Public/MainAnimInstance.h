@@ -22,6 +22,9 @@ public:
 	void UpdateAnimationProperties();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Movement)
+	bool dashing;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Movement)
 	float MovementSpeed;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Movement)
