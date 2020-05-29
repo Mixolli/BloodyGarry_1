@@ -9,6 +9,10 @@
 #include "GameFramework\Controller.h"
 #include "Runtime\Engine\Public\TimerManager.h"
 #include "GameFramework\CharacterMovementComponent.h"
+#include "HeadMountedDisplayFunctionLibrary.h"
+#include "GameFramework/PlayerController.h"
+#include "UObject/ConstructorHelpers.h"
+
 
 // Sets default values
 ABGCharacterBase::ABGCharacterBase()
@@ -16,21 +20,28 @@ ABGCharacterBase::ABGCharacterBase()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationYaw = false;
+	bUseControllerRotationRoll = false;
+
+
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
 	SpringArmComp->SetupAttachment(RootComponent);
+	
 
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
-	CameraComp->SetupAttachment(SpringArmComp);
+	CameraComp->SetupAttachment(SpringArmComp, USpringArmComponent::SocketName);
+	
 
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PlayerMesh"));
 	MeshComp->SetupAttachment(RootComponent);
 
-	//BaseTurnRate = 45.0f;
-	//BaseLookUpRate = 45.0f;
+	BaseTurnRate = 45.0f;
+	BaseLookUpRate = 45.0f;
 
 	//Dash mechanic from "Nitrogen" https://www.youtube.com/watch?v=tSBepXvgFlA
 	CanDash = true;
-	DashDistance = 5000.f;
+	DashDistance = 1000.f;
 	DashCooldown = 1.f;
 	DashStop = 0.1f;
 }
@@ -42,7 +53,7 @@ void ABGCharacterBase::MoveForward(float value)
 	{
 		//const FRotator Rotation = Controller->GetControlRotation();
 		//const FRotator YawRotation(0, Rotation.Yaw, 0);
-		
+		//
 		//const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 		//AddMovementInput(Direction, value);
 		AddMovementInput(FVector(1,0,0), value);
@@ -55,12 +66,13 @@ void ABGCharacterBase::MoveRight(float value)
 	{
 		//const FRotator Rotation = Controller->GetControlRotation();
 		//const FRotator YawRotation(0, Rotation.Yaw, 0);
-
+		//
 		//const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		//AddMovementInput(Direction, value);
 		AddMovementInput(FVector(0, 1, 0), value);
 	}
 }
+
 
 void ABGCharacterBase::TurnAtRate(float value)
 {
@@ -70,6 +82,34 @@ void ABGCharacterBase::TurnAtRate(float value)
 void ABGCharacterBase::LookUpAtRate(float value)
 {
 	AddControllerPitchInput(value * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+}
+
+void ABGCharacterBase::SetCursorDirection()
+{
+	APlayerController* PC = Cast<APlayerController>(GetController());
+	if (PC)
+	{
+		PC->bShowMouseCursor = true;
+		PC->bEnableClickEvents = true;
+		PC->bEnableMouseOverEvents = true;
+	}
+
+	
+	/* Getting the character to face the cursor. Source: "trazd", https://forums.unrealengine.com/development-discussion/c-gameplay-programming/1370491-getting-a-character-to-face-the-cursor-in-a-top-down-game */
+
+	FVector CurrLoc = this->GetActorLocation(); 
+
+	FHitResult hitResult;
+	GetWorld()->GetFirstPlayerController()->GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_Visibility), true, hitResult);
+	FVector hitLoc = hitResult.Location;
+	FRotator newRot = this->GetActorRotation();
+	
+	float newYaw = (hitLoc - CurrLoc).Rotation().Yaw;
+	newRot.Yaw = newYaw;
+
+	this->GetController()->SetControlRotation(newRot);
+
+
 }
 
 
@@ -104,7 +144,7 @@ void ABGCharacterBase::ResetDash()
 void ABGCharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	SetCursorDirection();
 }
 
 // Called to bind functionality to input
